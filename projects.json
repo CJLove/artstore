@@ -1,0 +1,46 @@
+{
+    "serf-cpp": {
+        "name": "Serf C++ Client library",
+        "path": "serf-cpp",
+        "items": {
+            "unit": {
+                "name": "Unit Tests",
+                "dir": "unit",
+                "type": "html"
+            },
+            "coverage": {
+                "name": "Code Coverage",
+                "dir": "coverage",
+                "type": "tgz"
+            },
+            "artifacts": {
+                "name": "Builds",
+                "dir": "artifacts",
+                "type": "collection",
+                "depth": 5
+            }
+        }
+    },
+    "config-cpp": {
+        "name": "Config C++ library",
+        "path": "config-cpp",
+        "items": {
+            "unit": {
+                "name": "Unit Tests",
+                "dir": "unit",
+                "type": "html"
+            },
+            "coverage": {
+                "name": "Code Coverage",
+                "dir": "coverage",
+                "type": "tgz"
+            },
+            "artifacts": {
+                "name": "Builds",
+                "dir": "artifacts",
+                "type": "collection",
+                "depth": 5
+            }
+        }
+    }
+}
