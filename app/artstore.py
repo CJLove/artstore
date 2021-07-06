@@ -1,6 +1,6 @@
-#!flask/bin/python
+#!/usr/bin/env python
 
-from flask import Flask, jsonify, abort, request, make_response
+from flask import Flask, jsonify, request, make_response
 import json
 import sys
 import os
@@ -8,16 +8,14 @@ import os.path
 from pathlib import Path
 import tarfile
 from zipfile import ZipFile
+import getopt
 
 app = Flask(__name__)
-
-config_file = "artstore.json"
-projects_file = "projects.json"
 
 def load_config(file_name):
     with open(file_name, 'r') as config_file:
         data = config_file.read()
-
+        data = data.replace('\n','')
     try:
         new_config = json.loads(data)
         # Json parsed successfully, now validate
@@ -50,7 +48,7 @@ def load_config(file_name):
 def load_projects(file_name):
     with open(file_name, 'r') as project_file:
         data = project_file.read()
-
+        data = data.replace('\n','')
     try:
         new_projects = json.loads(data)
         # parsed json successfully, now validate it
@@ -136,19 +134,11 @@ def handle_zip(project_name,item_name,file_name):
         zipObj.extractall(dest_path)
     return make_response(jsonify({'success': 'Updated item ' + item_name + ' in project ' + project_name}),200)
 
-@ app.errorhandler(400)
-def invalid_data(error):
-    return make_response(jsonify({'error': 'Invalid content type'}))
-
-@ app.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({'error': 'Project Not found'}), 404)
-
-@ app.route('/artstore', methods=['GET'])
+@ app.route('/', methods=['GET'])
 def get_projects():
     return jsonify({'projects': list(projects.keys())})
 
-@ app.route('/artstore/<project_name>', methods=['POST'])
+@ app.route('/<project_name>', methods=['POST'])
 def add_project(project_name):
     if project_name in projects:
         return make_response(jsonify({'error': 'Project already exists'}), 400)
@@ -166,30 +156,30 @@ def add_project(project_name):
         # Project definition is valid
         projects[project_name] = content
         create_project_dirs(project_name)
-        save_projects(projects_file)
+        save_projects(project_name)
         return make_response(jsonify({'success': 'project ' + project_name + ' added'}), 200)
     else:
         return make_response(jsonify({'error': 'Project ' + project_name + ' missing required keywords'}), 400)
 
 
-@ app.route('/artstore/<project>', methods=['DELETE'])
+@ app.route('/<project>', methods=['DELETE'])
 def del_project(project):
     if project in projects:
         del projects[project]
-        save_projects(projects_file)
+        save_projects(project)
         return make_response(jsonify({'success': 'project ' + project + 'deleted'}), 200)
     else:
         return make_response(jsonify({'error': 'Project ' + project + ' does not exist'}), 404)
 
 
-@ app.route('/artstore/<project>', methods=['GET'])
+@ app.route('/<project>', methods=['GET'])
 def get_project(project):
     if project in projects:
         return make_response(jsonify({project: projects[project]}), 200)
     else:
         return make_response(jsonify({'error': 'Project ' + project + ' does not exit'}), 404)
 
-@ app.route('/artstore/<project_name>/<item_name>', methods=['POST'])
+@ app.route('/<project_name>/<item_name>', methods=['POST'])
 def put_item(project_name, item_name):
     if project_name in projects:
         project = projects[project_name]
@@ -226,7 +216,24 @@ def put_item(project_name, item_name):
     else:
         return make_response(jsonify({'error': 'Project ' + project_name + ' does not exist'}),404)
 
+def main():
+    config_path='/etc/artstore'
+    try:
+        opts, args = getopt.getopt(sys.argv[1:],"c:")
+    except:
+        sys.exit(2)
+
+    for o,a in opts:
+        if o == "-c":
+            config_path = a
+        else:
+            pass
+
+
+    
+    load_config(os.path.join(config_path,'artstore.json'))
+    load_projects(os.path.join(config_path,'projects.json'))
+    app.run(host='127.0.0.1', port=5000)
+
 if __name__ == '__main__':
-    load_config('artstore.json')
-    load_projects('projects.json')
-    app.run(debug=True)
+    main()

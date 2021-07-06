@@ -22,7 +22,7 @@ $ curl http://127.0.0.1:5000/artstore/config-cpp
 
 ## Upload html
 ```bash
-$ curl -F filename=index.html -F upload=@index.html http://127.0.0.1:5000/artstore/serf-cpp/unit
+$ curl -F filename=index.html -F item=@index.html http://127.0.0.1:5000/artstore/serf-cpp/unit
 ```
 
 ## Upload .tgz
