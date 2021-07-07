@@ -20,19 +20,25 @@
 
 - `zip` - a `.zip` file can be uploaded to artstore and will be extracted to the item's directory. It is assumed that the directory will include an `index.html` file.
 
-- `collection` - a file can be uploaded to artstore and will be stored in the item's directory.  The last `depth` artifact files in the item directory will be retained.  An `index.html` file will be regenerated for the item's directory with links to all artifact files.  It is assumed that the filename will be unique (e.g. containing a version number).
+- TODO: `collection` - a file can be uploaded to artstore and will be stored in the item's directory.  The last `depth` artifact files in the item directory will be retained.  An `index.html` file will be regenerated for the item's directory with links to all artifact files.  It is assumed that the filename will be unique (e.g. containing a version number).
 
+## Container image
+The `Dockerfile` can be used to build a container image.  The `/etc/artstore` directory should be mounted into the container, as state information is maintained there. The path to the directory hierarchy managed by `artstore` should be passed in as well.
+
+## Nginx proxy
+The `default.conf` is a sample configuration file for `/etc/nginx/conf.d` which configures Nginx as a proxy for `artstore` (e.g. httpd://foo.com/artstore/ is proxied to the `artstore` service).
 
 ## REST API
+The following URIs are if the `artstore` service is run directly.  If the service is run with nginx or some other proxy then the URIs would likely have some other prefix (for example I use `artstore`)
 
-`POST artstore/<project>/<item>`		- upload a file with metadata for the specified project and item.  Expected Content-Type header is `multipart/form-data` with key `item`
+`POST /<project>/<item>`		- upload a file with metadata for the specified project and item.  Expected Content-Type header is `multipart/form-data` with key `item`
 
-`GET artstore/` - return list of projects
+`GET /` - return list of projects
 
-`POST artstore/<project>` - add a project configured based on the json passed in the request (see above project configuration).  Expected Content-Type header is `application/json`.
+`POST /<project>` - add a project configured based on the json passed in the request (see above project configuration).  Expected Content-Type header is `application/json`.
 
-`GET artstore/<project>` - get a project's current configuration 
+`GET /<project>` - get a project's current configuration 
 
-TODO: `PUT artstore/<project>` - update a project's configuration - what would this do to existing artifacts?
+TODO: `PUT /<project>` - update a project's configuration - what would this do to existing artifacts?
 
-`DELETE artstore/<project>` - delete a project
+`DELETE /<project>` - delete a project
