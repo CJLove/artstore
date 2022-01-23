@@ -233,7 +233,7 @@ def main():
     
     load_config(os.path.join(config_path,'artstore.json'))
     load_projects(os.path.join(config_path,'projects.json'))
-    app.run(host='127.0.0.1', port=5000)
+    app.run(host='0.0.0.0', port=5000)
 
 if __name__ == '__main__':
     main()

@@ -1,6 +1,6 @@
 {
-    "name": "Config C++ library",
-    "path": "config-cpp",
+    "name": "Msglib C++ library",
+    "path": "msglib-cpp",
     "items": {
           "unit": {
             "name": "Unit Tests",
